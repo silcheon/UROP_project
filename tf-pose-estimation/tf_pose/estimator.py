@@ -417,7 +417,7 @@ class TfPoseEstimator:
                     continue
 
                 body_part = human.body_parts[i]
-                center = (int(body_part.x * image_w + 0.5), int(body_part.y * image_h + 0.5)) # 실제 보여질 이미지에서의 key point의 좌표값.  
+                center = (int(body_part.x * image_w + 0.5), int(body_part.y * image_h + 0.5))
                 
                 ###
 #                 print("\n\ncenter\n\n")
@@ -427,7 +427,6 @@ class TfPoseEstimator:
                 centers[i] = center
                 cv2.circle(npimg, center, 3, common.CocoColors[i], thickness=3, lineType=8, shift=0) # 중심점에 점을 찍어준다. 
 
-            # draw line, pair가 되는 점과 점 사이에 선을 그려준다. 
 #             print("\n\n=== pairs ===\n\n")
             for pair_order, pair in enumerate(common.CocoPairsRender):
                 if pair[0] not in human.body_parts.keys() or pair[1] not in human.body_parts.keys():
@@ -552,8 +551,7 @@ class TfPoseEstimator:
         else:
             return cropped
 
-    ### 
-    def inference(self, npimg, resize_to_default=True, upsample_size=1.0): # 이미지 데이터를 upsampling 변환
+    def inference(self, npimg, resize_to_default=True, upsample_size=1.0):
         if npimg is None:
             raise Exception('The image is not valid. Please check your image exists.')
 
@@ -563,7 +561,6 @@ class TfPoseEstimator:
             upsample_size = [int(npimg.shape[0] / 8 * upsample_size), int(npimg.shape[1] / 8 * upsample_size)]
 
         if self.tensor_image.dtype == tf.quint8:
-            # quantize input image, 입력 이미지를 정량화 
             npimg = TfPoseEstimator._quantize_img(npimg)
             pass
 

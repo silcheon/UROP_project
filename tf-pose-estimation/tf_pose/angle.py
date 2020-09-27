@@ -1,8 +1,6 @@
 import logging
 import math
 
-### 각도 계산 
-
 logger = logging.getLogger('AngleRun')
 
 def angle_between_points(p0, p1, p2):
@@ -40,50 +38,15 @@ def get_angle_point(human, pos):
     elif pos == 'right_knee':
         pos_list = (8, 9, 10) 
     
-#     if pos == 0: # left_shouder
-#         pos_list = {'left_shoulder': (1, 2, 3)}
-#     elif pos == 1: # left_elbow
-#         pos_list = {'left_elbow': (5, 6, 7)}
-#     elif pos == 2: # left_pelvis
-#         pos_list = {'left_pelvis': (1, 8, 4)}
-#     elif pos == 3: # left_knee
-#         pos_list = {'left_knee': (8, 9, 10)}
-    
-    ###
-#     print('\n\n== check ==\n\n')
-    
-#     print(human.body_parts.keys()) # test
-#     for i in human.body_parts.keys():
-#         print(human.body_parts[i]) # test
-#         print('\n')
-    
-#     print('\n\n\n')
-    ###
-    
     for i in range(3):
-        if pos_list[i] not in human.body_parts.keys(): # (1, 8, 4) 
+        if pos_list[i] not in human.body_parts.keys():
             logger.info('component [%d] incomplete', pos_list[i])
             return pnts
         p = human.body_parts[pos_list[i]]
-        
-#         logger.info(pos_list[i]) # check
-#         logger.info(p.score) # check
         pnts.append((p.x, p.y))
     
     return pnts
-
-# def angle_left_elbow(human):
-#     pnts = get_angle_point(human, 'left_elbow')
-#     if len(pnts) != 3:
-#         logger.info('component incomplete')
-#         return 
-    
-#     angle = 0
-#     if pnts is not None:
-#         angle = angle_between_points(pnts[0], pnts[1], pnts[2])
-#         logger.info('left elbow angle: %f' % (angle))
-#         return angle 
-    
+ 
 def get_angle(human, pos):
     pnts = get_angle_point(human, pos)
     if len(pnts) != 3:
@@ -93,7 +56,7 @@ def get_angle(human, pos):
     angle = 0
     if pnts is not None:
         angle = angle_between_points(pnts[0], pnts[1], pnts[2])
-#         logger.info('%s angle: %f' % (pos, angle))
-        return angle 
+        logger.info('%s angle: %f' % (pos, angle))
+    return angle 
 
 ###    
