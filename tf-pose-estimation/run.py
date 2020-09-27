@@ -9,8 +9,8 @@ import numpy as np
 from tf_pose.estimator import TfPoseEstimator
 from tf_pose.networks import get_graph_path, model_wh
 
-import pprint # 
-from tf_pose import angle # 각도 측정 모듈 
+import pprint
+from tf_pose import angle # add module of angle 
 
 
 logger = logging.getLogger('TfPoseEstimatorRun')
@@ -22,7 +22,7 @@ formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(levelname)s] %(messag
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
-### 옵션값 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='tf-pose-estimation run')
     parser.add_argument('--image', type=str, default='./images/p1.jpg')
@@ -36,14 +36,12 @@ if __name__ == '__main__':
 
     args = parser.parse_args() 
 
-    w, h = model_wh(args.resize) # 이미지 사이즈 값을 저장, w : 너비, h : 높이 
+    w, h = model_wh(args.resize) 
     if w == 0 or h == 0:
-        e = TfPoseEstimator(get_graph_path(args.model), target_size=(432, 368)) # graph의 check point를 불러옴. 
+        e = TfPoseEstimator(get_graph_path(args.model), target_size=(432, 368)) 
     else:
         e = TfPoseEstimator(get_graph_path(args.model), target_size=(w, h))
-###
 
-    ###
     # estimate human poses from a single image !
     image = common.read_imgfile(args.image, None, None)
     if image is None:
@@ -51,26 +49,23 @@ if __name__ == '__main__':
         sys.exit(-1)
 
     t = time.time()
-    humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=args.resize_out_ratio) # inference, 입력된 이미지를 변환시킨 후 humans 에 저장  
+    humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=args.resize_out_ratio)
     
     ###
 #     print("\n\nhuman\n\n")
 #     print(type(humans))
 #     pprint.pprint(humans)
 #     print(humans[0])
+#     print(humans[0].body_parts.keys())
     ###
-    # body part 값을 가지고 각도를 재서 모범이 되는 운동자세의 각도와 비교하면 될듯함. 비교할 body part는 팔, 몸통, 다리 부분으로 정하는 식으로 한다. 
 
     elapsed = time.time() - t  
 
     logger.info('inference image: %s in %.4f seconds.' % (args.image, elapsed))
 
-    image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False) # draw_humans, 자세 추정 데이터(점, 선)를 그린 이미지를 저장  
+    image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False) 
     
-    ### 각도 계산 추가 부분 
-#     print(humans[0])
-#     ang = angle.angle_left_elbow(humans[0])
-    
+    # measure body part angle    
     body_part_left_list = ['left_shoulder', 'left_elbow', 'left_pelvis', 'left_knee']
     
     body_part_right_list = ['right_shoulder', 'right_elbow', 'right_pelvis', 'right_knee']
@@ -78,29 +73,33 @@ if __name__ == '__main__':
     print("\n\n== body part left angle ==\n\n") 
     
     for i in body_part_left_list: 
-        ang = angle.get_angle(humans[0], i)
         print('\n\n')
-        print('%s angle is %f\n' % (i, ang))
+        ang = angle.get_angle(humans[0], i)
+        pos = i.replace('_', ' ')
         
-        if ang > 130: print("Fold your arms a little!\n") # 예를 들어봄. 
-    
-    print('\n\n')
+        if ang is not None:
+            print('%s angle is %f\n' % (pos, ang))
+        
+            if ang > 130: print("Fold your arms a little!\n") # TODO: pose_trainer 조건 추가 해야 할 부분
+                
+        else:
+            print("%s is not found\n" % (pos))
     
     print("\n\n== body part right angle ==\n\n") 
     
     for i in body_part_right_list: 
-        ang = angle.get_angle(humans[0], i)
         print('\n\n')
-        print('%s angle is %f\n' % (i, ang))
+        ang = angle.get_angle(humans[0], i)
+        pos = i.replace('_', ' ')
         
-        if ang > 130: print("Fold your arms a little!\n") # 예를 들어봄. 
+        if ang is not None:
+            print('%s angle is %f\n' % (pos, ang))
+        
+            if ang > 130: print("Fold your arms a little!\n") # TODO: pose_trainer 조건 추가 해야 할 부분
+                
+        else: 
+            print("%s is not found\n" % (pos))
     
-    print('\n\n')
-    
-    # TODO: 이미지에서 키포인트들의 좌표값과 coco 각 관절에 부여된 숫자 출력 
-    ###
-    
-    # vectormap & heatmap plot 그리는 부분 
     try:
         import matplotlib.pyplot as plt
 
