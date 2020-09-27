@@ -30,7 +30,15 @@ def get_angle_point(human, pos):
     elif pos == 'left_pelvis': # 골반 
         pos_list = (1, 11, 12)
     elif pos == 'left_knee':
-        pos_list = (11, 12, 13)    
+        pos_list = (11, 12, 13)
+    elif pos == 'right_shoulder':
+        pos_list = (1, 2, 3)
+    elif pos == 'right_elbow':
+        pos_list = (2, 3, 4)
+    elif pos == 'right_pelvis': # 골반 
+        pos_list = (1, 8, 9)
+    elif pos == 'right_knee':
+        pos_list = (8, 9, 10) 
     
 #     if pos == 0: # left_shouder
 #         pos_list = {'left_shoulder': (1, 2, 3)}
@@ -41,16 +49,16 @@ def get_angle_point(human, pos):
 #     elif pos == 3: # left_knee
 #         pos_list = {'left_knee': (8, 9, 10)}
     
+    ###
+#     print('\n\n== check ==\n\n')
     
-    print('\n\n== check ==\n\n')
+#     print(human.body_parts.keys()) # test
+#     for i in human.body_parts.keys():
+#         print(human.body_parts[i]) # test
+#         print('\n')
     
-    print(human.body_parts.keys()) # test
-    for i in human.body_parts.keys():
-        print(human.body_parts[i]) # test
-        print('\n')
-    
-    print('\n\n\n')
-    
+#     print('\n\n\n')
+    ###
     
     for i in range(3):
         if pos_list[i] not in human.body_parts.keys(): # (1, 8, 4) 
@@ -58,11 +66,9 @@ def get_angle_point(human, pos):
             return pnts
         p = human.body_parts[pos_list[i]]
         
-        logger.info(pos_list[i]) # check
-        logger.info(p.score) # check
+#         logger.info(pos_list[i]) # check
+#         logger.info(p.score) # check
         pnts.append((p.x, p.y))
-    
-    
     
     return pnts
 
@@ -87,7 +93,7 @@ def get_angle(human, pos):
     angle = 0
     if pnts is not None:
         angle = angle_between_points(pnts[0], pnts[1], pnts[2])
-        logger.info('%s angle: %f' % (pos, angle))
+#         logger.info('%s angle: %f' % (pos, angle))
         return angle 
 
 ###    

@@ -428,7 +428,7 @@ class TfPoseEstimator:
                 cv2.circle(npimg, center, 3, common.CocoColors[i], thickness=3, lineType=8, shift=0) # 중심점에 점을 찍어준다. 
 
             # draw line, pair가 되는 점과 점 사이에 선을 그려준다. 
-            print("\n\n=== pairs ===\n\n")
+#             print("\n\n=== pairs ===\n\n")
             for pair_order, pair in enumerate(common.CocoPairsRender):
                 if pair[0] not in human.body_parts.keys() or pair[1] not in human.body_parts.keys():
                     continue
@@ -440,14 +440,15 @@ class TfPoseEstimator:
                 
 #                 keypoint1 = haumn.body_parts[pair[0]]
 #                 keypoint2 = human.body_parts[pair[1]]
-                keypoint1 = centers[pair[0]]
-                keypoint2 = centers[pair[1]]
-                print('(' , pair[0], ', ', pair[1], ') = ')
-                print(keypoint1, keypoint2)
+#                 keypoint1 = centers[pair[0]]
+#                 keypoint2 = centers[pair[1]]
+#                 print('(' , pair[0], ', ', pair[1], ') = ')
+#                 print(keypoint1, keypoint2)
 #                 print('((', keypoint1.x, ', ', keypoint1.x, ')', ', (', keypoint2.x, ', ', keypoint2.y, '))')
-#             print("\n\n=== pairs ===\n\n")
+#             print("\n\n=== pairs =ㄴ==\n\n")
             
                 ###
+        
         return npimg
 
     def _get_scaled_img(self, npimg, scale):

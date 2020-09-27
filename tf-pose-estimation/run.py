@@ -53,41 +53,54 @@ if __name__ == '__main__':
     t = time.time()
     humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=args.resize_out_ratio) # inference, 입력된 이미지를 변환시킨 후 humans 에 저장  
     
-    #
-    print("\n\nhuman\n\n")
-    print(type(humans))
-    pprint.pprint(humans)
-    print(humans[0])
-    #
+    ###
+#     print("\n\nhuman\n\n")
+#     print(type(humans))
+#     pprint.pprint(humans)
+#     print(humans[0])
+    ###
     # body part 값을 가지고 각도를 재서 모범이 되는 운동자세의 각도와 비교하면 될듯함. 비교할 body part는 팔, 몸통, 다리 부분으로 정하는 식으로 한다. 
+
     elapsed = time.time() - t  
 
     logger.info('inference image: %s in %.4f seconds.' % (args.image, elapsed))
 
     image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False) # draw_humans, 자세 추정 데이터(점, 선)를 그린 이미지를 저장  
-    ###
     
     ### 각도 계산 추가 부분 
 #     print(humans[0])
 #     ang = angle.angle_left_elbow(humans[0])
     
-    body_part_list = ['left_shoulder', 'left_elbow', 'left_pelvis', 'left_knee']
+    body_part_left_list = ['left_shoulder', 'left_elbow', 'left_pelvis', 'left_knee']
     
-    print("\n\n== body part angle ==\n\n") 
+    body_part_right_list = ['right_shoulder', 'right_elbow', 'right_pelvis', 'right_knee']
     
-    for i in body_part_list: 
+    print("\n\n== body part left angle ==\n\n") 
+    
+    for i in body_part_left_list: 
         ang = angle.get_angle(humans[0], i)
         print('\n\n')
         print('%s angle is %f\n' % (i, ang))
         
-        if ang > 130: print("Fold your arms a little!\n")
+        if ang > 130: print("Fold your arms a little!\n") # 예를 들어봄. 
+    
+    print('\n\n')
+    
+    print("\n\n== body part right angle ==\n\n") 
+    
+    for i in body_part_right_list: 
+        ang = angle.get_angle(humans[0], i)
+        print('\n\n')
+        print('%s angle is %f\n' % (i, ang))
+        
+        if ang > 130: print("Fold your arms a little!\n") # 예를 들어봄. 
     
     print('\n\n')
     
     # TODO: 이미지에서 키포인트들의 좌표값과 coco 각 관절에 부여된 숫자 출력 
+    ###
     
-    
-    ### vectormap & heatmap plot 그리는 부분 
+    # vectormap & heatmap plot 그리는 부분 
     try:
         import matplotlib.pyplot as plt
 
