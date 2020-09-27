@@ -1,0 +1,79 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import tensorflow as tf\n",
+    "import cv2\n",
+    "\n",
+    "### 각도 계산 \n",
+    "def angle_between_points(p0, p1, p2):\n",
+    "    a = (p1[0] - p0[0])**2 + (p1[1] - p0[1])**2\n",
+    "    b = (p1[0] - p2[0])**2 + (p1[1] - p2[1])**2\n",
+    "    c = (p2[0] - p0[0])**2 + (p2[1] - p0[1])**2\n",
+    "    \n",
+    "    return  math.acos((a + b - c) / math.sqrt(4 * a * b)) * 180 / math.pi \n",
+    "\n",
+    "def length_between_points(p0, p1): \n",
+    "    return math.hypot(p1[0] - p0[0], p1[1] - p0[1])\n",
+    "\n",
+    "def human_cnt(humans):\n",
+    "    if humans is None: \n",
+    "        return 0\n",
+    "    return len(humans)\n",
+    "\n",
+    "def get_angle_point(human, pos):\n",
+    "    pnts = []\n",
+    "    if pos == 'left_elbow':\n",
+    "        pos_list = (5, 6, 7)\n",
+    "        \n",
+    "    for i in range(3):\n",
+    "        if pos_list[i] not in human.body_parts.keys():\n",
+    "            logger.info('component [%d] incomplete', pos_list[i])\n",
+    "            return pnts\n",
+    "        p = human.body_parts[pos_list[i]]\n",
+    "        pnts.append(p.x, p.y)\n",
+    "    \n",
+    "    return pnts\n",
+    "\n",
+    "def angle_left_elbow(human):\n",
+    "    pnts = get_angle_point(human, 'left_elbow')\n",
+    "    if len(pnts) != 3:\n",
+    "        logger.info('component incomplete')\n",
+    "        return \n",
+    "    \n",
+    "    angle = 0\n",
+    "    if pnts is not None:\n",
+    "        angle = angle_between_points(pnts[0], pnts[1], pnts[2])\n",
+    "        logger.info('left elbow angle: %f' % (angle))\n",
+    "        return angle\n",
+    "\n",
+    "###    "
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
