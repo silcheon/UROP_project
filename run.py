@@ -8,6 +8,7 @@
 
 import cv2
 import numpy as np
+import glob
 #from pose_estimation.pose_estimation import get_keypoints
 #from pose_trainer.pose_trainer import evaluate_npy
 from pose_estimation import get_keypoints
@@ -35,30 +36,62 @@ def capture_video(video) :
         
     cap.release()
 
-
-
-def check_differentitaion_angle() :
+#def make_numpy_file():
     
+
+def check_differentitaion_angle() :    
     pass
     
 if __name__ == '__main__' :
-    # save capture files for testing
-    # video_path = './video/bicep_curl.mp4'
+    
+    # # save capture files for testing
+    # video_path = './video/squat/squat_good_1.mp4'
     # capture_video(video_path)
 
-    print("\n\nSTART\n\n")
-    keypoints = []
+    # print("\n\nSTART\n\n")
+    # keypoints = []
 
-    #get_keypoints('./images/p1.jpg')
+    # #get_keypoints('./images/p1.jpg')
     
-    for count in range(test_frame) :
-        print('frame :', count)
-        keypoints.append(get_keypoints(f'./cap_imgs/frame_{count}.jpg'))
+    # for count in range(test_frame) :
+    #     print('frame :', count)
+    #     keypoints.append(get_keypoints(f'./cap_imgs/frame_{count}.jpg'))
         
-        
-    keypoints = np.array(keypoints)
-    np.save('./numpy/test', keypoints)
+    # keypoints = np.array(keypoints)
+    # np.save('./numpy/test', keypoints)
     
-    evaluate_npy('./numpy/test.npy', 'bicep_curl')
+    # evaluate_npy('./numpy/test.npy', 'bicep_curl')
 
+
+    ######################################################################
+    # CONVERT VIDEO TO NUMPY
+    ######################################################################
+    # for capture
+    file_path = './video/squat/'
+    save_path = "./pose_compressed/squat"
+
+    files = sorted(glob.glob(file_path + '*.m*'))
+    # 또는 변환할 파일들
+    #files = ['squat_good_1.mp4']
+
+    # 이미 변환된 파일 제외
+    saved_files = sorted(glob.glob(save_path + '*.npy'))
+    saved_files = [f.split('/')[-1][:-4] for f in saved_files]
+    
+    for f in files :
+        if f in saved_files : continue
+        
+        fn = f.split('/')[-1][:-4]
+        keypoints = []
+        cap = cv2.VideoCapture(f)
+
+        while(cap.isOpened()):
+            ret, image = cap.read()
+            keypoints.append(get_keypoints(image))
+
+        keypoints = np.array(keypoints)
+        print("\n\nSaved {save_path}/{len(f)[:-4]}")
+        np.save(f'{save_path}/{fn}', keypoints)   
+
+        
 
