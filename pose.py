@@ -5,7 +5,8 @@ class PoseSequence:
         self.poses = []
         for parts in sequence:
             self.poses.append(Pose(parts))
-        
+
+        '''
         # normalize poses based on the average torso pixel length
         torso_lengths = np.array([Part.dist(pose.neck, pose.lhip) for pose in self.poses if pose.neck.exists and pose.lhip.exists] +
                                  [Part.dist(pose.neck, pose.rhip) for pose in self.poses if pose.neck.exists and pose.rhip.exists])
@@ -19,7 +20,7 @@ class PoseSequence:
                 #print(f"pose - {pose}")
                 #print(f"attr - {attr}")
                 #print(f"part - {part.x / mean_torso} {part.y / mean_torso}")        
-
+        '''
     
 
 class Pose:
