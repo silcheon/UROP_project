@@ -11,12 +11,8 @@ import numpy as np
 import glob
 #from pose_estimation.pose_estimation import get_keypoints
 #from pose_trainer.pose_trainer import evaluate_npy
-from pose_estimation import get_keypoints_for_cap
+from pose_estimation import get_keypoints
 from pose_trainer import evaluate_npy
-
-from tf_pose.networks import get_graph_path
-from tf_pose.estimator import TfPoseEstimator
-
 
 test_frame = 20
 
@@ -34,7 +30,6 @@ def capture_video(video) :
         
         print('Saved frame%d.jpg' % count)
         count += 1
-
         # end while loop after saved test_frame frame
         if count == test_frame : break
         
@@ -72,7 +67,7 @@ if __name__ == '__main__' :
     ######################################################################
     # for capture
     file_path = './video/squat/'
-    save_path = "./poses_compressed/squat"
+    save_path = "./pose_compressed/squat"
 
     files = sorted(glob.glob(file_path + '*.m*'))
     # 또는 변환할 파일들
@@ -81,8 +76,8 @@ if __name__ == '__main__' :
     # 이미 변환된 파일 제외
     saved_files = sorted(glob.glob(save_path + '*.npy'))
     saved_files = [f.split('/')[-1][:-4] for f in saved_files]
-    print(saved_files)
-    
+
+
     files = files[5:]
     for f in files :
         if f in saved_files : continue
@@ -91,30 +86,15 @@ if __name__ == '__main__' :
         keypoints = []
         cap = cv2.VideoCapture(f)
 
-        # need image, model, resize, resize-out-ratio
-        w, h = 432, 368          # image size fixed 432x368
-        model='mobilenet_thin'
-        
-        e = TfPoseEstimator(get_graph_path(model), target_size=(w, h))
-
-        print(f"\n\nStart Converting {f}")
-        fcnt = 0
-        while (cap.isOpened()):
-            fcnt+=1
-
+        while(cap.isOpened()):
             ret, image = cap.read()
-            k = get_keypoints_for_cap(image, e, False)
-
-            if k == -1 : break
+            keypoints.append(get_keypoints(image, display = True))
+            print(keypoints)
             
-            keypoints.append(k)
-            print(f"converted {fcnt} frame")
-
-
         keypoints = np.array(keypoints)
-        print(f"Converted {fcnt} frames")
+        print("\n\nSaved {save_path}/{len(f)[:-4]}")
         np.save(f'{save_path}/{fn}', keypoints)
-        print(f"\n\nSaved {save_path}/{fn}")        
+        
 
         
 

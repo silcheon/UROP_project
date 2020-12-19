@@ -8,7 +8,7 @@ import pprint
 import numpy as np
 from tf_pose import common
 from tf_pose.estimator import TfPoseEstimator
-from tf_pose.networks import get_graph_path, model_wh
+from tf_pose.networks import get_graph_path
 
 # get humans class
 # model setted mobilenet_thin (later should check which model is the best and use)
@@ -51,8 +51,10 @@ def get_keypoints(image, model='mobilenet_thin', display=False) :
     # need image, model, resize, resize-out-ratio
     w, h = 432, 368          # image size fixed 432x368
     upsample_size = 4.0      # default
-    
+
+
     e = TfPoseEstimator(get_graph_path(model), target_size=(w, h))
+
 
     
     # if you use video capture, do not need line
@@ -88,6 +90,61 @@ def get_keypoints(image, model='mobilenet_thin', display=False) :
 
     return key_points
 
+def get_keypoints_for_cap(image, e, display=False) :
+    cocopart_dict = {'Nose': 0,
+                     'Neck': 1,  
+                     'RShoulder' : 2,
+                     'RElbow' : 3,
+                     'RWrist' : 4,
+                     'LShoulder' : 5,
+                     'LElbow' : 6,
+                     'LWrist' : 7,
+                     'RHip' : 8,
+                     'RKnee' : 9,
+                     'RAnkle' : 10,
+                     'LHip' : 11,
+                     'LKnee' : 12,
+                     'LAnkle' : 13,
+                     'REye' : 14,
+                     'LEye' : 15,
+                     'REar' : 16,
+                     'LEar' : 17
+                                  } 
+
+    key_points    = []
+
+    w, h = 432, 368          # image size fixed 432x368
+    upsample_size = 4.0      # default
+
+
+    if image is None :
+        #logger.error('Image can not be read, path=%s' % args.image)
+        print(f'Image {image} can not be read')
+        return -1
+
+    t = time.time()
+    
+    # upsample_size default setting 4.0
+    humans = e.inference(image, resize_to_default=(w > 0 and h > 0), upsample_size=upsample_size)
+    elapsed = time.time() - t
+    
+    #for key, value in cocopart_dict.items() :
+    #    key_points[key] = (humans[0].body_parts[value].x, humans[0].body_parts[value].y)    
+    for key, value in cocopart_dict.items() :
+        # JS
+        # 만약 추적된 Keypoints들이 없으면 key 값이 없다(제외시켜주기 위해 try 문 사용)
+        try : 
+            key_points.append([humans[0].body_parts[value].x, humans[0].body_parts[value].y, humans[0].body_parts[value].score])
+        except : key_points.append([-1, -1, 0])
+
+    #pprint.pprint(key_points)
+        
+    # display pose_estimation result
+    if display == True :
+        display_image(image, e)
+
+
+    return key_points
 
 
 def display_image(image, e) :
@@ -114,10 +171,13 @@ def display_image(image, e) :
         a.set_title('affinity')
 
         plt.imshow(bgimg, alpha=0.5)
-        plt.imshow(tmp2_even, cmap=plt.cm.gray, alpha=0.5)
-                   
+        #plt.imshow(tmp2_even, cmap=plt.cm.gray, alpha=0.5)
+
         plt.show()
 
+        plt.waitforbuttonpress()
+        plt.close()
+        
 
 if __name__ == '__main__':
     keypoints = {'LAnkle': (0.7083333333333334, 0.7771739130434783),
@@ -135,7 +195,7 @@ if __name__ == '__main__':
                  'RWrist': (0.27314814814814814, 0.32065217391304346)}
         
     keypoints = get_keypoints('./images/p1.jpg')
-    print((np.array([keypoints])).shape)
+    #print((np.array([keypoints])).shape)
     np.save("./numpy/test", np.array([keypoints]))
     #print(f"x : {keypoints['RElbow'][0]}")
     #print(f"y : {keypoints['RElbow'][1]}")
