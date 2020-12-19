@@ -76,18 +76,21 @@ if __name__ == '__main__' :
 
     files = sorted(glob.glob(file_path + '*.m*'))
     # 또는 변환할 파일들
+    
+    print(files)
     #files = ['squat_good_1.mp4']
 
     # 이미 변환된 파일 제외
-    saved_files = sorted(glob.glob(save_path + '*.npy'))
+    saved_files = sorted(glob.glob(save_path + '/*.npy'))
     saved_files = [f.split('/')[-1][:-4] for f in saved_files]
     print(saved_files)
     
-    files = files[5:]
+    
+    #files = files
     for f in files :
-        if f in saved_files : continue
-        
         fn = f.split('/')[-1][:-4]
+        if fn in saved_files : continue
+
         keypoints = []
         cap = cv2.VideoCapture(f)
 
