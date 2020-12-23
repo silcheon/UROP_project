@@ -71,6 +71,7 @@ if __name__ == '__main__' :
     # CONVERT VIDEO TO NUMPY
     ######################################################################
     # for capture
+    exercise = 'squat'
     file_path = './video/squat/'
     save_path = "./poses_compressed/squat"
 
@@ -84,10 +85,9 @@ if __name__ == '__main__' :
     saved_files = sorted(glob.glob(save_path + '/*.npy'))
     saved_files = [f.split('/')[-1][:-4] for f in saved_files]
     print(saved_files)
-    
-    
+
     #files = files
-    for f in files :
+    for f in files[:] :
         fn = f.split('/')[-1][:-4]
         if fn in saved_files : continue
 

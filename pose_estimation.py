@@ -141,15 +141,18 @@ def get_keypoints_for_cap(image, e, display=False) :
         
     # display pose_estimation result
     if display == True :
-        display_image(image, e)
+        display_image(image, e, humans)
 
 
     return key_points
 
 
-def display_image(image, e) :
+def display_image(image, e, humans) :
         import matplotlib.pyplot as plt
 
+    
+        image = TfPoseEstimator.draw_humans(image, humans, imgcopy=True)
+        
         fig = plt.figure()
 
         bgimg = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_BGR2RGB)
@@ -159,9 +162,9 @@ def display_image(image, e) :
         a = fig.add_subplot(2, 1, 1)
         a.set_title('keypoints')
 
-        plt.imshow(bgimg, alpha=0.5)
+        plt.imshow(bgimg, alpha=0.1)
         tmp = np.amax(e.heatMat[:, :, :-1], axis=2)
-        plt.imshow(tmp, cmap=plt.cm.gray, alpha=0.7)
+        plt.imshow(tmp, cmap=plt.cm.gray, alpha=0.2)
 
         # show part affinity
         tmp2 = e.pafMat.transpose((2, 0, 1))
@@ -170,7 +173,7 @@ def display_image(image, e) :
         a = fig.add_subplot(2, 1, 2)
         a.set_title('affinity')
 
-        plt.imshow(bgimg, alpha=0.5)
+        plt.imshow(bgimg, alpha=1)
         #plt.imshow(tmp2_even, cmap=plt.cm.gray, alpha=0.5)
 
         plt.show()
